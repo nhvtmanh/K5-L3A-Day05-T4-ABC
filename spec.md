@@ -5,7 +5,7 @@
 | Họ và Tên                  | Mã Học Viên | Việc đã làm |
 | -------------------------- | ----------- | ----------- |
 | Nguyễn Hoàng Văn Tiến Mạnh | 2A202603717 |             |
-| Nguyễn Thị Thu Hà          | 2A202603719 |             |
+| Nguyễn Thị Thu Hà          | 2A202603719 |§4. Mức tự chủ (chặng 4); §6. Tốt là gì (chặng 6)|
 | Phan Văn Cường             | 2A202603669 |§3. Khi AI sai (chặng 3)|
 
 ## §1. Lát cắt & phạm vi
@@ -79,16 +79,131 @@ Nhóm chọn **K04 và K05 là hai kịch bản đắt nhất để thiết kế
 
 ## §4. Mức tự chủ (chặng 4)
 
-Với mỗi tool:
+Mỗi tool được xét theo ba câu: **sai thì ai chịu gì · đảo lại được không · chờ người thì mất gì.** Hai kịch bản đắt nhất dùng để thử là **K04** và **K05**; kịch bản bình thường là **K01** (theo §2).
 
-- Mức của nhóm (tự làm / cần người duyệt / cấm). Nếu cần người duyệt: ai duyệt · người duyệt thấy gì · quá hạn thì sao.
-- Lý do theo cost-of-error: sai thì ai chịu gì · đảo lại được không · chờ người thì mất gì.
-- Phương án đã cân nhắc và vì sao loại.
-  Thêm:
-- Tool khó xếp nhất: mỗi người từng chọn gì, cái giá của mỗi phía (trỏ về kịch bản ở §2), nhóm chốt thế nào.
-- Thử mức đã đặt trên 2 kịch bản đắt nhất + 1 kịch bản bình thường: cái sai có bị chặn không? còn việc nào làm khi lẽ ra phải hỏi? người dùng bình thường có phải chờ vô ích không?
-- Luật thêm hoặc tool tách bước (nếu có), và vì sao.
-- Một mức tự chủ đã đổi lời hứa nào với người dùng.
+### 4.1 Bảng tổng
+
+| Tool | Mức | Ai duyệt / điều kiện | Kịch bản liên quan |
+|---|---|---|---|
+| `yeu_cau_bang_chung` | **tự làm**, kèm luật L1 và L4 | — | K02, K09 |
+| `chuyen_truong_nhom` | **tự làm**; bắt buộc chuyển trong 4 trường hợp | — | K04, K05, K06, K08 |
+| `soan_hoan_tien` | **cần người duyệt**, tách thành 2 bước | Người bán đồng ý; nếu người bán phản đối hoặc quá hạn thì nhân viên sàn duyệt | K01, K05, K10, K11 |
+| `tu_choi_khieu_nai` | **cấm** với AI | Chỉ nhân viên làm, trong công cụ của họ | K03, K04, K11 |
+| `phat_shop` | **cấm** | Không có; yêu cầu loại này đi qua `chuyen_truong_nhom` | K06 |
+| `soan_nhap_yeu_cau` *(nhóm thêm)* | **tự làm** phần soạn nháp; việc gửi đi do **người mua bấm** | Người mua | K12 |
+
+### 4.2 Lập luận từng tool
+
+**`yeu_cau_bang_chung` · tự làm**
+- *Sai thì ai chịu:* AI xin nhầm đơn hoặc hỏi thừa (K02, K09), người mua mất công gửi lại và bực. Gửi cho người bán lúc chưa cần thì người bán bị làm phiền. Không bên nào mất tiền.
+- *Đảo được không:* tin đã tới thì không thu hồi được, nhưng gửi tin đính chính được ngay, nên thiệt hại nhỏ.
+- *Chờ người thì mất gì:* người mua chờ hàng giờ chỉ để được biết còn thiếu ảnh gì. Đó đúng là lời phàn nàn của người mua trong T4. Trong lúc chờ, hạn trả hàng vẫn chạy (K08).
+- *Đã cân nhắc "cần duyệt":* loại, vì chỉ làm chậm hơn mà không chặn được thiệt hại đáng kể nào.
+- *Luật kèm theo:* L1 (hỏi đơn nào trước khi xin) và L4 (mẫu tin nói rõ đã nhận gì, còn thiếu gì; tối đa 2 lần rồi chuyển người). Xem 4.5.
+
+**`chuyen_truong_nhom` · tự làm**
+- *Sai thì ai chịu:* chuyển thừa thì trưởng nhóm tốn công, người mua chờ thêm một chút. **Không chuyển khi cần mới là sai đắt** (K04, K06), vì vậy có luật bắt buộc chuyển.
+- *Đảo được không:* được, trưởng nhóm trả hồ sơ về.
+- *Chờ người thì mất gì:* bắt người duyệt cho việc "chuyển sang người duyệt" là vòng lặp vô nghĩa.
+- *Bắt buộc chuyển khi:*
+  - (a) không có bản mô tả lúc đặt đã xác thực, trong khi hai bên nói khác nhau (K04);
+  - (b) có tố cáo hàng giả hoặc đòi phạt shop (K06);
+  - (c) hai bên vẫn bất đồng sau khi người bán đã phản hồi (K03, K05);
+  - (d) đã xin bằng chứng 2 lần mà vẫn thiếu (K09), hoặc không xác định được hạn trả hàng (K08).
+- *Câu AI nói khi chuyển:* "Mình đã chuyển hồ sơ cho trưởng nhóm." AI không nói "bộ phận chuyên trách đã nhận", vì §1 mục 2 cấm hứa khi chưa có xác nhận.
+- *Đã cân nhắc giới hạn số ca được chuyển để giảm tải:* loại, vì như vậy là đẩy rủi ro về phía bên đang thiếu căn cứ.
+
+**`soan_hoan_tien` · cần người duyệt** (tool khó xếp nhất, xem 4.3)
+- *Sai thì ai chịu:* hoàn sai thì người bán mất tiền, thường mất cả hàng. Ví dụ: K05 hoàn vì bị doạ, K10 hoàn trước khi người bán được phản hồi, K11 hoàn nhầm đơn.
+- *Đảo được không:* khó, vì tiền đã về người mua.
+- *Chờ người thì mất gì:* người mua nhận tiền chậm hơn. Với ca rõ ràng như K01 thì chờ là vô ích, nên người duyệt phải là người nhanh nhất có quyền.
+- *Tách thành 2 bước:*
+  - `de_xuat_hoan_tien`: AI gom lý do, bằng chứng, mã đơn, số tiền. **Tự làm**, vì chưa có tiền đi.
+  - `thuc_hien_hoan_tien`: **chỉ chạy khi có người duyệt.**
+  - Tên gốc `soan_hoan_tien` dễ bị hiểu là "soạn" trong khi thực ra là hoàn tiền (K12), nên tách tên cho rõ.
+- *Ai duyệt:* người bán bấm "Đồng ý hoàn" là đủ. Nếu người bán phản đối hoặc quá hạn thì nhân viên sàn duyệt.
+- *Người duyệt thấy gì:*
+  - mã đơn;
+  - mô tả lúc đặt nếu có bản đã xác thực, còn không thì nhãn **"Chưa có bản mô tả lúc đặt đã xác thực"**;
+  - ảnh bằng chứng của cả hai bên;
+  - nhận định của AI ("khớp / không khớp / chưa đủ căn cứ") kèm lý do;
+  - phản hồi của người bán.
+  - Lời doạ của người mua **không** hiện như một căn cứ (L3).
+- *Quá hạn:* người bán không phản hồi trong **24 giờ** (mốc nhóm tự đặt trong thiết kế dựng, khớp §3) thì hồ sơ chuyển nhân viên, **không tự hoàn**. Im lặng không được coi là nhận sai (K10). Người mua thấy thông báo: "Shop chưa phản hồi trong 24 giờ. Hồ sơ đã được chuyển cho nhân viên Shopee xem."
+- *Đã cân nhắc "quá hạn thì tự hoàn":* loại, vì người bán bận hoặc nghỉ lễ sẽ mất tiền chỉ vì im lặng. Cái giá là người mua chờ thêm, và nhóm chấp nhận cái giá đó.
+
+**`tu_choi_khieu_nai` · cấm**
+- *Sai thì ai chịu:* người mua mất tiền và phải giữ hàng sai. Ví dụ: K04 lấy trang hiện tại làm sự thật nên bác oan, K03 AI tự bịa giải thích kỹ thuật, K11 từ chối nhầm đơn.
+- *Đảo được không:* khó, vì tiền đã về người bán.
+- *Chờ người thì mất gì:* gần như không mất gì. Tiền đang do sàn giữ, người bán chỉ nhận tiền chậm hơn.
+- *Đã cân nhắc "cần duyệt":* loại vì hai lý do.
+  - Khi AI đề xuất "từ chối", người duyệt dễ bấm theo.
+  - Những ca AI muốn từ chối thường là ca "chưa đủ căn cứ". Ví dụ K05: tem khớp nhưng chưa chắc đã hết tranh chấp. Việc đúng là xin thêm bằng chứng hoặc chuyển người, không phải đóng hồ sơ.
+  - Nhân viên vẫn từ chối được trong công cụ của họ; chỉ AI là không có nút này.
+- *Phân biệt với luật tự huỷ L7 ở §3 (K05):* hồ sơ tự huỷ khi **người mua** bỏ dở là luật hệ thống công bố trước, không phải AI đánh giá rồi gọi `tu_choi_khieu_nai`.
+
+**`phat_shop` · cấm**
+- *Sai thì ai chịu:* cả shop bị trừ uy tín hoặc bị khoá, ảnh hưởng tới mọi đơn khác.
+- *Đảo được không:* khó, uy tín đã mất thì khó lấy lại.
+- *Chờ người thì mất gì:* người mua ở K06 không mất gì, vì tiền của họ đi theo luồng trả hàng riêng.
+- *Thẩm quyền:* việc này nằm ngoài phạm vi (§1 mục 2).
+- *Đã cân nhắc "cần duyệt":* loại, vì một khiếu nại kèm vài tấm ảnh không đủ căn cứ để phạt cả shop, và một bước xác nhận không chặn được sai lầm đó.
+
+**`soan_nhap_yeu_cau` · tool nhóm thêm** (trả lời cho K12)
+- *Làm gì:* AI điền sẵn mã đơn, lý do "không đúng mô tả" và các ảnh đã nhận vào form trả hàng có sẵn, rồi hiện trạng thái **"Nháp — chưa gửi"**.
+- *Mức:* soạn nháp thì AI tự làm; nút "Gửi yêu cầu" thì **người mua bấm**.
+- *Sai thì ai chịu:* nháp sai thì người mua sửa trước khi gửi, rẻ. Nếu AI tự gửi mà nhầm đơn (K11) thì khó gỡ, nên việc gửi phải do người mua bấm.
+- *Đảo được không:* nháp sửa hoặc xoá được.
+- *Chờ người thì mất gì:* không phải chờ ai ngoài chính người mua.
+- *Đã cân nhắc hai phương án khác:*
+  - "AI tự gửi": loại, vì K12 cho thấy người mua dễ nhầm trạng thái.
+  - "Không thêm tool, AI chỉ hướng dẫn bằng chữ": loại, vì người mua phải tự tìm luồng trả hàng, đúng nỗi đau "không ai nói tôi còn thiếu cái gì".
+
+### 4.3 Tool khó xếp nhất: `soan_hoan_tien`
+
+- **Ai chọn gì** (mỗi người tự xếp trong 5 phút, chưa bàn): [ĐIỀN: Mạnh chọn …, Hà chọn …, Cường chọn …, … chọn …]
+- **Nếu cho tự làm:** K05 sẽ hoàn vì bị doạ, K10 sẽ hoàn trước khi người bán được nghe. Người bán chịu thiệt và không đảo lại được.
+- **Nếu bắt người duyệt:** ở K01, shop đã nhận gửi nhầm và không ai tranh cãi, nhưng người mua vẫn phải chờ.
+- **Nếu cấm:** mọi ca đều dồn về nhân viên, gây nghẽn, và người mua không biết khi nào có tiền.
+- **Nhóm chốt:** cần người duyệt, nhưng **chọn người duyệt theo ca**:
+  - Ca rõ ràng: người bán bấm "Đồng ý hoàn" là đủ.
+  - Ca tranh chấp: nhân viên duyệt.
+  - Ở K01, câu "shop nhắn nhận gửi nhầm rồi" chỉ là lời người mua, nên **không** được tính là xác nhận. Xác nhận phải là thao tác của người bán trong hệ thống.
+
+### 4.4 Thử mức đã đặt trên 3 kịch bản
+
+| Kịch bản | Với mức này AI làm gì | Cái sai có bị chặn? | Còn làm khi lẽ ra phải hỏi? | Người dùng bình thường có chờ vô ích? |
+|---|---|---|---|---|
+| **K04** (đắt) | Nói rõ chưa có bản mô tả lúc đặt đã xác thực; dùng `yeu_cau_bang_chung` xin thêm chứng cứ từ hai bên; bắt buộc `chuyen_truong_nhom` | **Có.** AI không có nút từ chối. Việc hoàn cần người duyệt, và người duyệt thấy nhãn "chưa có bản lúc đặt" | Có một kẽ hở: khi tóm tắt cho người duyệt, AI có thể ngầm coi trang hiện tại là bản lúc đặt. Đã vá bằng L2 (bắt buộc gắn nhãn) | Người mua phải chờ trưởng nhóm. Chấp nhận được, vì đây đúng là ca cần người |
+| **K05** (đắt) | Nói: "Tem và mô tả lúc đặt đang khớp 6 lít; cảm nhận 'thấy bé' chưa đủ căn cứ." Xin người mua chỉ ra sai khác cụ thể. Người bán thấy khiếu nại và hạn 24 giờ. Nếu vẫn tranh chấp thì chuyển nhân viên | **Có.** Lời doạ không mở được nút hoàn (L3). AI không có nút từ chối, nên cũng không đóng hồ sơ vội | `yeu_cau_bang_chung` gửi người bán mà không hỏi trước. Chấp nhận, vì việc này rẻ | Người mua chờ người bán phản hồi tối đa 24 giờ. Đây là cái giá có chủ đích của nguyên tắc "hai bên cùng được nghe" |
+| **K01** (bình thường) | Xác định đơn → `soan_nhap_yeu_cau` kèm danh sách bằng chứng (ảnh tem size, ảnh áo) → người mua bấm Gửi → người bán bấm Đồng ý → hoàn tiền | Không có cái sai nào cần chặn | Nếu AI coi lời người mua "shop nhận rồi" là xác nhận thì sẽ hoàn sớm. Đã chặn ở 4.3 | Chỉ chờ người bán bấm một lần. Kẽ hở: nếu người bán im lặng, người mua chờ 24 giờ rồi mới tới nhân viên, chậm hơn cách cho tự hoàn. Nhóm chấp nhận để giữ trung lập |
+
+Thử thêm hai ca ngoài 3 ca trên:
+- **K02:** `yeu_cau_bang_chung` được tự làm, nên AI có thể đoán đơn rồi xin bằng chứng cho nhầm đơn. Lỗ hổng này dẫn tới luật L1.
+- **K11:** nếu đề xuất hoàn đã soạn cho đơn áo vẫn còn hiệu lực sau khi người dùng đổi sang đơn nồi chiên, AI có thể dùng nhầm. Lỗ hổng này dẫn tới luật L5.
+
+### 4.5 Luật thêm và tool tách bước
+
+| Luật / thay đổi tool | Chặn kịch bản nào |
+|---|---|
+| Tách `soan_hoan_tien` thành `de_xuat_hoan_tien` (tự làm) và `thuc_hien_hoan_tien` (cần duyệt) | K05, K10, K11, K12 |
+| Thêm `soan_nhap_yeu_cau`; người mua tự bấm gửi | K12 |
+| **L1:** chưa rõ đơn nào hoặc sai chỗ nào thì hỏi lại đúng 1 câu, chưa gọi tool nào | K02 |
+| **L2:** không có bản mô tả lúc đặt đã xác thực thì không kết luận khớp hay không khớp; gắn nhãn rõ và chuyển người | K04 |
+| **L3:** lời doạ (bóc phốt, đánh giá 1 sao) và lịch sử khiếu nại của một bên không phải căn cứ để hoàn | K05 |
+| **L4:** mẫu xin bằng chứng phải liệt kê đã nhận gì, còn thiếu gì và vì sao cần; mỗi hồ sơ xin tối đa 2 lần rồi chuyển người | K09 |
+| **L5:** mọi đề xuất đều gắn mã đơn; người dùng đổi đơn thì đề xuất cũ bị huỷ và bằng chứng được rà lại | K11 |
+| **L6:** không nêu số ngày còn lại khi thiếu mốc nhận hàng hoặc chính sách; không đưa SĐT hay địa chỉ của bên kia trong bất kỳ tin nào | K08, K07 |
+| **L7:** hồ sơ chỉ tự huỷ khi người mua không thao tác trong 48 giờ **và** bằng chứng hiện có đang khớp mô tả (K05, theo §3); người mua được nhắc trước khi huỷ. Không áp dụng khi thiếu bản mô tả lúc đặt (K04 giữ nguyên hồ sơ cho trưởng nhóm) | K05, K04 |
+
+*Đã cân nhắc thêm một tool đọc lịch sử mô tả:* không thêm, vì track không cấp dữ liệu này. Nếu sàn có dữ liệu đó, K04 sẽ nhẹ đi nhiều. Đây là đề xuất cho bản sau.
+
+### 4.6 Một mức tự chủ đã đổi lời hứa với người dùng
+
+- **Trước:** "Trợ lý AI xử lý khiếu nại cho bạn."
+- **Sau:** "Trợ lý giúp bạn gửi đúng yêu cầu, đủ bằng chứng. Việc hoàn tiền do shop đồng ý hoặc nhân viên Shopee quyết." Câu này khớp với nhãn đầu khung chat ở §3: "Trợ lý AI hỗ trợ đối chiếu — Không tự quyết định tiền hay phạt shop".
+- Vì hoàn tiền cần người duyệt và từ chối bị cấm, AI **không được nói** "bạn sẽ được hoàn tiền" hay "khiếu nại bị từ chối". Vì việc gửi do người mua bấm, AI cũng không được nói "đã gửi" khi người mua chưa bấm (K12).
+- Với người bán, lời hứa mới là: "Bạn luôn được phản hồi trước khi tiền được hoàn."
 
 ## §5. Prototype (chặng 5)
 
@@ -96,9 +211,22 @@ Với mỗi tool:
 - 1–2 ảnh có đánh số; mỗi số: thể hiện gì · nguyên tắc HAX/PAIR nào · mức tự chủ nào.
 - Quyết định: cách hiện độ chắc/bằng chứng và điều khiển mức tự chủ — đã nghĩ tới cách nào khác, vì sao chọn cách này.
 
-## §6. Tốt là gì (chặng 6 — nhẹ, bỏ được nếu thiếu giờ)
+## §6. Tốt là gì (chặng 6)
 
-- 3 tiêu chí Pass/Fail chấm được; thiết kế của nhóm đạt tiêu chí nào trên 2 kịch bản đắt nhất; lỗi còn lại.
+### 3 tiêu chí Pass/Fail
+
+| # | Tiêu chí | Pass khi | Fail khi |
+|---|---|---|---|
+| T1 | **Đúng căn cứ** | Mỗi nhận định "khớp / không khớp / chưa đủ căn cứ" đều ghi rõ nguồn (mô tả lúc đặt đã xác thực, tem, ảnh). Không có bản lúc đặt đã xác thực thì AI không kết luận mà chuyển người | AI lấy trang hiện tại làm mô tả lúc đặt, hoặc tự bịa giải thích kỹ thuật |
+| T2 | **Không có tiền đi khi thiếu người duyệt** | Không hoàn khi người bán chưa đồng ý hoặc nhân viên chưa duyệt; AI không bao giờ gọi `tu_choi_khieu_nai`; cùng một hồ sơ, có hay không có lời doạ, đều ra cùng kết quả | Có tiền đi mà không có người duyệt, hoặc lời doạ làm đổi kết quả |
+| T3 | **Nói đúng trạng thái** | Mỗi câu trả lời nêu đúng 1 trạng thái hồ sơ (đang hướng dẫn / nháp chưa gửi / đã gửi / chờ shop / chờ nhân viên) và 1 bước tiếp theo | AI nói "đã gửi", "sẽ được hoàn", hoặc nêu số ngày còn lại khi hệ thống chưa có dữ liệu đó |
+
+### Chấm thử trên 2 kịch bản đắt nhất
+
+| Kịch bản | T1 | T2 | T3 | Lỗi còn lại |
+|---|---|---|---|---|
+| K04 | Pass (nhờ L2) | Pass | Pass | Không nói được trưởng nhóm sẽ xử lý trong bao lâu, vì track không có thời hạn xử lý; người mua có thể thấy bị bỏ lửng |
+| K05 | Pass | Pass | Pass | Câu "chưa đủ căn cứ" dễ bị người mua hiểu là sàn bênh shop. Luật tự huỷ sau 48 giờ (L7) có thể đóng một khiếu nại đúng nếu người mua bận; tin nhắc trước khi huỷ giảm được rủi ro này nhưng chưa loại hẳn |
 
 ## §7. Demo
 
