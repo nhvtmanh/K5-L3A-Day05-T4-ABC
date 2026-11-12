@@ -5,7 +5,7 @@
 | Họ và Tên                  | Mã Học Viên | Việc đã làm |
 | -------------------------- | ----------- | ----------- |
 | Nguyễn Hoàng Văn Tiến Mạnh | 2A202603717 |             |
-| Nguyễn Thị Thu Hà          | 2A202603719 |             |
+| Nguyễn Thị Thu Hà          | 2A202603719 |§4. Mức tự chủ (chặng 4); §6. Tốt là gì (chặng 6)|
 | Phan Văn Cường             | 2A202603669 |§3. Khi AI sai (chặng 3)|
 
 ## §1. Lát cắt & phạm vi
