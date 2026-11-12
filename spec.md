@@ -161,7 +161,7 @@ Mỗi tool được xét theo ba câu: **sai thì ai chịu gì · đảo lại 
 
 ### 4.3 Tool khó xếp nhất: `soan_hoan_tien`
 
-- **Ai chọn gì** (mỗi người tự xếp trong 5 phút, chưa bàn): [ĐIỀN: Mạnh chọn …, Hà chọn …, Cường chọn …, … chọn …]
+- **Ai chọn gì** (mỗi người tự xếp trong 5 phút, chưa bàn): cả 4 thành viên đều chọn **cần người duyệt**. Nhóm vẫn xếp đây là tool khó nhất vì mức nào cũng có giá (ba ý dưới), và điều phải chốt thêm là **ai duyệt** và **quá hạn thì sao**.
 - **Nếu cho tự làm:** K05 sẽ hoàn vì bị doạ, K10 sẽ hoàn trước khi người bán được nghe. Người bán chịu thiệt và không đảo lại được.
 - **Nếu bắt người duyệt:** ở K01, shop đã nhận gửi nhầm và không ai tranh cãi, nhưng người mua vẫn phải chờ.
 - **Nếu cấm:** mọi ca đều dồn về nhân viên, gây nghẽn, và người mua không biết khi nào có tiền.
