@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Prototype dữ liệu giả cho trợ lý xử lý khiếu nại hàng không đúng mô tả.">
+  <title>Trợ lý khiếu nại · Prototype T4</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #202b2a;
+      --muted: #64716e;
+      --line: #dce5e1;
+      --paper: #ffffff;
+      --canvas: #f3f7f5;
+      --green: #176b52;
+      --green-soft: #e8f4ee;
+      --amber: #805a0b;
+      --amber-soft: #fff4d8;
+      --red: #9c3e36;
+      --red-soft: #fff0ed;
+      --blue: #2b5b86;
+      --blue-soft: #edf4fb;
+      --shadow: 0 12px 32px rgba(32, 54, 46, .07);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 90% 0%, #e6f4ec 0, transparent 26rem),
+        var(--canvas);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    button { font: inherit; }
+
+    .shell { max-width: 1180px; margin: 0 auto; padding: 24px; }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 11px; font-weight: 750; }
+
+    .brand-mark {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      color: white;
+      background: var(--green);
+      border-radius: 12px;
+      font-size: 19px;
+    }
+
+    .brand small, .eyebrow, .subtle { color: var(--muted); }
+    .brand small { display: block; font-size: 12px; font-weight: 500; }
+    .demo-badge { border: 1px solid #b9daca; border-radius: 99px; padding: 6px 11px; color: var(--green); background: #f4fbf7; font-size: 12px; font-weight: 700; }
+
+    .heading { margin-bottom: 18px; }
+    .eyebrow { margin: 0 0 4px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(24px, 3vw, 32px); line-height: 1.2; letter-spacing: -.03em; }
+    .intro { max-width: 760px; margin: 9px 0 0; color: var(--muted); }
+
+    .case-picker {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 22px 0 16px;
+    }
+
+    .case-picker > span { margin-right: 4px; color: var(--muted); font-weight: 650; }
+
+    .case-button, .quiet-button, .action-button {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--paper);
+      color: var(--ink);
+      cursor: pointer;
+      transition: border-color .15s, background .15s, transform .15s;
+    }
+
+    .case-button { padding: 8px 12px; }
+    .case-button[aria-pressed="true"] { border-color: var(--green); color: var(--green); background: var(--green-soft); font-weight: 700; }
+    button:hover:not(:disabled) { border-color: #8db9a5; }
+    button:active:not(:disabled) { transform: translateY(1px); }
+    button:focus-visible { outline: 3px solid #91c9ae; outline-offset: 2px; }
+    button:disabled { cursor: not-allowed; opacity: .48; }
+
+    .layout { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(310px, .85fr); gap: 18px; align-items: start; }
+    .column { display: grid; gap: 18px; }
+    .card { overflow: hidden; border: 1px solid var(--line); border-radius: 18px; background: var(--paper); box-shadow: var(--shadow); }
+    .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; padding: 17px 19px; border-bottom: 1px solid var(--line); }
+    .card-head h2, .section-title { margin: 0; font-size: 15px; }
+    .card-head p { margin: 3px 0 0; color: var(--muted); font-size: 12px; }
+    .order-id { color: var(--muted); font-size: 12px; white-space: nowrap; }
+
+    .order-strip { display: flex; gap: 12px; align-items: center; padding: 14px 19px; background: #fafcfb; border-bottom: 1px solid var(--line); }
+    .product-icon { display: grid; flex: 0 0 42px; width: 42px; height: 42px; place-items: center; border-radius: 13px; background: var(--green-soft); font-size: 22px; }
+    .order-strip strong { display: block; }
+    .order-strip small { color: var(--muted); }
+    .status { flex: 0 0 auto; margin-left: auto; padding: 5px 9px; border-radius: 99px; color: var(--amber); background: var(--amber-soft); font-size: 11px; font-weight: 750; }
+    .status.resolved { color: var(--blue); background: var(--blue-soft); }
+
+    .chat { display: flex; min-height: 320px; max-height: 410px; flex-direction: column; gap: 12px; overflow-y: auto; padding: 18px 19px; }
+    .message { max-width: 88%; padding: 11px 13px; border-radius: 15px; }
+    .message .sender { display: block; margin-bottom: 3px; color: var(--muted); font-size: 11px; font-weight: 700; }
+    .message p { margin: 0; }
+    .message.buyer { align-self: flex-end; color: white; background: #315c7e; border-bottom-right-radius: 4px; }
+    .message.buyer .sender { color: #dcebf7; }
+    .message.assistant { align-self: flex-start; background: #f2f6f4; border: 1px solid #e5ece8; border-bottom-left-radius: 4px; }
+    .message.seller { align-self: flex-start; background: #f8f2e7; border: 1px solid #eee2cb; border-bottom-left-radius: 4px; }
+    .message.notice { align-self: center; max-width: 100%; padding: 6px 10px; color: var(--muted); background: transparent; font-size: 12px; text-align: center; }
+    .message .message-meta { display: block; margin-top: 6px; color: var(--muted); font-size: 11px; }
+    .message.buyer .message-meta { color: #dcebf7; }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 19px 18px; }
+    .actions .section-title { flex-basis: 100%; }
+    .action-button { padding: 9px 12px; font-weight: 650; }
+    .action-button.primary { border-color: var(--green); color: white; background: var(--green); }
+    .action-button.primary:hover:not(:disabled) { background: #105941; }
+    .action-button.outline { border-color: #b7c9c1; color: var(--green); }
+    .action-button.danger { color: var(--red); }
+
+    .inline-note { margin: 0 19px 18px; padding: 10px 12px; border-radius: 11px; color: var(--muted); background: #f7f9f8; font-size: 12px; }
+    .inline-note strong { color: var(--ink); }
+
+    .panel-body { padding: 17px 19px; }
+    .confidence { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 13px; padding: 5px 9px; border-radius: 99px; color: var(--amber); background: var(--amber-soft); font-size: 11px; font-weight: 750; }
+    .confidence::before { width: 7px; height: 7px; border-radius: 50%; background: #d39720; content: ""; }
+    .fact { margin-bottom: 10px; padding: 11px 12px; border: 1px solid var(--line); border-radius: 12px; }
+    .fact:last-child { margin-bottom: 0; }
+    .fact .label { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 4px; color: var(--muted); font-size: 11px; font-weight: 700; }
+    .fact p { margin: 0; }
+    .fact.historical { border-color: #b9daca; background: #f5fbf7; }
+    .fact.current { border-color: #eed9ac; background: #fffaf0; }
+    .source { margin-top: 5px; color: var(--muted); font-size: 11px; }
+    .annotation { display: inline-grid; width: 19px; height: 19px; place-items: center; border-radius: 50%; color: white; background: #b84d20; font-size: 11px; font-weight: 800; vertical-align: middle; }
+    .divider { height: 1px; margin: 15px 0; background: var(--line); }
+
+    .level-list { display: grid; gap: 9px; }
+    .level-row { display: grid; grid-template-columns: minmax(102px, .95fr) minmax(110px, 1fr) 1.7fr; align-items: start; gap: 8px; padding: 9px 0; border-bottom: 1px solid #edf1ef; font-size: 11px; }
+    .level-row:last-child { border-bottom: 0; }
+    .tool-name { color: #35423e; font-family: Consolas, monospace; overflow-wrap: anywhere; }
+    .level { width: fit-content; padding: 3px 7px; border-radius: 99px; font-weight: 750; white-space: nowrap; }
+    .level.auto { color: var(--green); background: var(--green-soft); }
+    .level.review { color: var(--amber); background: var(--amber-soft); }
+    .level.blocked { color: var(--red); background: var(--red-soft); }
+    .reason { color: var(--muted); }
+    .annotation-list { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
+    .annotation-list li { display: flex; gap: 8px; align-items: flex-start; color: var(--muted); font-size: 12px; }
+    .annotation-list strong { color: var(--ink); }
+    .policy-note { padding: 11px 12px; border: 1px solid #eed9ac; border-radius: 12px; color: #674d18; background: #fffaf0; font-size: 12px; }
+    .policy-note strong { display: block; margin-bottom: 3px; }
+    .footer { margin: 17px 2px 0; color: var(--muted); font-size: 11px; text-align: center; }
+
+    @media (max-width: 800px) {
+      .shell { padding: 16px; }
+      .layout { grid-template-columns: 1fr; }
+      .chat { min-height: 250px; }
+    }
+
+    @media (max-width: 520px) {
+      .shell { padding: 12px; }
+      .topbar { margin-bottom: 20px; }
+      .case-picker { align-items: stretch; }
+      .case-picker > span { flex-basis: 100%; }
+      .case-button { flex: 1; text-align: left; }
+      .card-head, .panel-body { padding-right: 14px; padding-left: 14px; }
+      .order-strip { padding-right: 14px; padding-left: 14px; }
+      .chat { padding-right: 14px; padding-left: 14px; }
+      .actions { padding-right: 14px; padding-left: 14px; }
+      .inline-note { margin-right: 14px; margin-left: 14px; }
+      .level-row { grid-template-columns: 1fr 1fr; }
+      .reason { grid-column: 1 / -1; }
+      .message { max-width: 96%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">↔</div>
+        <div>Trợ lý khiếu nại<small>Trải nghiệm hỗ trợ người mua</small></div>
+      </div>
+      <span class="demo-badge">PROTOTYPE · DỮ LIỆU GIẢ</span>
+    </header>
+
+    <section class="heading" aria-labelledby="page-title">
+      <p class="eyebrow">Track 4 · Hàng không đúng mô tả</p>
+      <h1>Giải quyết có căn cứ, công bằng hai phía</h1>
+      <p class="intro">Trợ lý giúp bạn gửi đúng yêu cầu, đủ bằng chứng. Việc hoàn tiền do shop đồng ý hoặc nhân viên Shopee quyết định; AI không tự quyết tiền hay từ chối khiếu nại.</p>
+    </section>
+
+    <nav class="case-picker" aria-label="Chọn ca demo">
+      <span>Chọn ca demo:</span>
+      <button class="case-button" type="button" data-case="edited" aria-pressed="true">Mô tả đã thay đổi</button>
+      <button class="case-button" type="button" data-case="seller-right" aria-pressed="false">Bằng chứng khớp mô tả</button>
+    </nav>
+
+    <main class="layout">
+      <section class="card" aria-labelledby="conversation-title">
+        <div class="card-head">
+          <div>
+            <h2 id="conversation-title">Trò chuyện với trợ lý</h2>
+            <p id="case-caption">Ca demo: thông tin sản phẩm đã được cập nhật sau khi đặt hàng</p>
+          </div>
+          <span class="order-id" id="order-id">Đơn giả lập #DH-1042</span>
+        </div>
+
+        <div class="order-strip">
+          <div class="product-icon" id="product-icon" aria-hidden="true">🍳</div>
+          <div>
+            <strong id="product-name">Nồi chiên không dầu</strong>
+            <small id="product-summary">Đặt ngày 10/11/2026 · Dữ liệu dựng</small>
+          </div>
+          <span class="status" id="case-status">Đang kiểm tra</span>
+        </div>
+
+        <div class="chat" id="chat" role="log" aria-live="polite" aria-relevant="additions text"></div>
+
+        <div class="actions" aria-label="Thao tác prototype">
+          <p class="section-title"><span class="annotation">3</span> Trạng thái và bước tiếp theo</p>
+          <button class="action-button primary" id="request-evidence" type="button">Yêu cầu bổ sung bằng chứng</button>
+          <button class="action-button outline" id="add-evidence" type="button">Mô phỏng đã gửi ảnh</button>
+          <button class="action-button outline" id="seller-reply" type="button">Mô phỏng shop phản hồi</button>
+          <button class="action-button danger" id="transfer-case" type="button">Chuyển Trưởng nhóm</button>
+        </div>
+        <p class="inline-note"><strong>Quyền kiểm soát:</strong> Bạn có thể bổ sung thông tin hoặc yêu cầu nhân viên xem xét. AI chưa hoàn tiền hay đóng khiếu nại.</p>
+      </section>
+
+      <aside class="column" aria-label="Căn cứ và giới hạn của AI">
+        <section class="card" aria-labelledby="evidence-title">
+          <div class="card-head">
+            <div>
+              <h2 id="evidence-title"><span class="annotation">1</span> Căn cứ đang đối chiếu</h2>
+              <p>Đối chiếu dữ liệu có sẵn; không mặc định trang hiện tại là mô tả lúc đặt</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <span class="confidence" id="confidence">Chưa đủ căn cứ để kết luận</span>
+            <div class="fact historical">
+              <div class="label"><span>MÔ TẢ LÚC ĐẶT HÀNG</span><span id="order-date-label">Chưa xác thực</span></div>
+              <p id="historical-description"></p>
+              <div class="source" id="historical-source"></div>
+            </div>
+            <div class="fact current">
+              <div class="label"><span>MÔ TẢ HIỆN TẠI</span><span id="current-date-label">12/11 · 10:15</span></div>
+              <p id="current-description"></p>
+              <div class="source" id="current-source"></div>
+            </div>
+            <div class="divider"></div>
+            <p class="section-title"><span class="annotation">2</span> Còn cần làm rõ</p>
+            <p class="subtle" id="missing-evidence" style="margin:7px 0 0"></p>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="autonomy-title">
+          <div class="card-head">
+            <div>
+              <h2 id="autonomy-title">AI được làm đến đâu?</h2>
+              <p>Mức tự chủ minh họa cho prototype</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="level-list">
+              <div class="level-row">
+                <span class="tool-name">yeu_cau_bang_chung</span>
+                <span class="level auto">Tự làm</span>
+                <span class="reason">Gửi yêu cầu rõ thông tin còn thiếu.</span>
+              </div>
+              <div class="level-row">
+                <span class="tool-name">chuyen_truong_nhom</span>
+                <span class="level auto">Tự làm</span>
+                <span class="reason">Chuyển hồ sơ được; phù hợp khi chứng cứ mâu thuẫn.</span>
+              </div>
+              <div class="level-row">
+                <span class="tool-name">de_xuat_hoan_tien</span>
+                <span class="level auto">Tự làm</span>
+                <span class="reason">Chỉ lập đề xuất; chưa có tiền đi.</span>
+              </div>
+              <div class="level-row">
+                <span class="tool-name">thuc_hien_hoan_tien</span>
+                <span class="level review">Cần người duyệt</span>
+                <span class="reason">Shop đồng ý hoặc nhân viên duyệt mới thực hiện.</span>
+              </div>
+              <div class="level-row">
+                <span class="tool-name">tu_choi_khieu_nai</span>
+                <span class="level blocked">Cấm AI</span>
+                <span class="reason">Chỉ nhân viên có thẩm quyền quyết định trong công cụ của họ.</span>
+              </div>
+              <div class="level-row">
+                <span class="tool-name">phat_shop</span>
+                <span class="level blocked">Cấm</span>
+                <span class="reason">Không thuộc luồng khiếu nại này; cần bộ phận chuyên trách.</span>
+              </div>
+              <div class="level-row">
+                <span class="tool-name">soan_nhap_yeu_cau</span>
+                <span class="level auto">Tự làm nháp</span>
+                <span class="reason">Người mua kiểm tra và bấm gửi.</span>
+              </div>
+            </div>
+            <div class="divider"></div>
+            <div class="policy-note">
+              <strong>AI không tự hoàn tiền hoặc từ chối khiếu nại</strong>
+              Hoàn tiền cần shop đồng ý hoặc nhân viên duyệt; từ chối chỉ do nhân viên quyết định. AI chỉ xin bằng chứng và chuyển hồ sơ.
+            </div>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="principles-title">
+          <div class="card-head">
+            <div>
+              <h2 id="principles-title">Chú thích thiết kế</h2>
+              <p>Đối chiếu với spec §3 và ảnh prototype</p>
+            </div>
+          </div>
+          <div class="panel-body">
+            <ul class="annotation-list">
+              <li><span class="annotation">1</span><span><strong>G10 · Thu hẹp khi chưa chắc:</strong> trạng thái nêu rõ chưa đủ căn cứ.</span></li>
+              <li><span class="annotation">2</span><span><strong>G11 · Giải thích vì sao:</strong> chỉ ra nguồn và dữ liệu còn thiếu.</span></li>
+              <li><span class="annotation">3</span><span><strong>PAIR · Có đường lui:</strong> người mua có thể bổ sung bằng chứng hoặc chuyển người.</span></li>
+            </ul>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <p class="footer">Bài tập thiết kế · Không kết nối Shopee, không gửi dữ liệu đi đâu · Mọi tên đơn hàng và nội dung đều là dữ liệu giả</p>
+  </div>
+
+  <script>
+    const cases = {
+      edited: {
+        caption: "K04 · Người mua và shop bất đồng về mô tả lúc đặt",
+        orderId: "Đơn giả lập #DH-1042",
+        icon: "👕",
+        product: "Áo thun cotton",
+        date: "Đặt ngày 10/11/2026 · Dữ liệu dựng",
+        orderDate: "Chưa xác thực",
+        currentDate: "12/11 · 10:15",
+        confidence: "Thiếu dữ liệu lúc đặt · Chuyển Trưởng nhóm",
+        historical: "Chưa có bản mô tả lúc đặt đã xác thực",
+        historicalSource: "Nguồn: chưa có dữ liệu lịch sử đã xác thực; không dùng trang hiện tại thay thế",
+        currentSource: "Nguồn: trang sản phẩm hiện tại (dữ liệu dựng)",
+        current: "Chất liệu: vải pha",
+        missing: "Ảnh chi tiết đơn hàng lúc đặt hoặc tin nhắn xác nhận của shop. Ảnh người mua gửi chưa xác minh được thời điểm; shop có 24 giờ phản hồi. Hồ sơ vẫn mở nếu người mua chưa thao tác.",
+        buyer: "Lúc mua ghi cotton 100%, giờ shop sửa thành vải pha rồi bảo mình đọc nhầm.",
+        initialAI: "Trang hiện tại ghi “vải pha”, nhưng hệ thống chưa có bản mô tả lúc bạn đặt đã xác thực. Mình chưa đủ căn cứ để kết luận. Bạn có thể bổ sung ảnh chi tiết đơn hàng lúc đặt hoặc tin nhắn của shop; Trưởng nhóm sẽ kiểm tra hồ sơ.",
+        evidenceRequest: "Mình đã ghi nhận yêu cầu bổ sung ảnh chi tiết đơn hàng lúc đặt hoặc tin nhắn của shop. Shop có 24 giờ phản hồi; hồ sơ vẫn chờ Trưởng nhóm kiểm tra, chưa có quyết định hoàn tiền hay từ chối.",
+        buyerEvidence: "Mình đã gửi ảnh chi tiết đơn hàng/tin nhắn của shop để đối chiếu.",
+        evidenceFollowup: "Đã ghi nhận nội dung bạn gửi; thời điểm và tính xác thực chưa được xác minh trong prototype. Trưởng nhóm sẽ xem cùng phản hồi của shop.",
+        seller: "Shop phản hồi: trang hiện tại đang ghi vải pha. Phản hồi này chưa xác minh được mô tả tại thời điểm đặt hàng.",
+        transfer: "Hồ sơ đã được chuyển Trưởng nhóm để xem xét tranh chấp về mô tả lúc đặt. Nhân viên có thể xem dữ liệu hiện tại, nội dung người mua gửi và phản hồi của shop; prototype không giả định đã truy xuất được lịch sử."
+      },
+      "seller-right": {
+        caption: "K05 · Mô tả và tem khớp 6 lít, người mua vẫn đang tranh chấp",
+        orderId: "Đơn giả lập #DH-2086",
+        icon: "🍳",
+        product: "Nồi chiên không dầu",
+        date: "Đặt ngày 10/11/2026 · Dữ liệu dựng",
+        orderDate: "Đã xác thực · 10/11",
+        currentDate: "Hiện tại",
+        confidence: "Dữ liệu ban đầu khớp · Chưa đủ căn cứ hoàn tiền",
+        historical: "Dung tích trong mô tả lúc đặt: 6 lít",
+        historicalSource: "Nguồn: mô tả lúc đặt đã xác thực (dữ liệu dựng)",
+        currentSource: "Nguồn: tem trên sản phẩm người mua cung cấp (giả định của kịch bản)",
+        current: "Dung tích trên tem: 6 lít",
+        missing: "Người mua chưa nêu được sai khác cụ thể ngoài cảm nhận kích thước. Có thể bổ sung cách đo/bằng chứng; shop có 24 giờ phản hồi. Nếu người mua không thao tác trong 48 giờ, hồ sơ được nhắc trước khi tự hủy theo thiết kế.",
+        buyer: "Tem đúng 6 lít đấy nhưng tôi thấy bé, hoàn ngay không tôi bóc phốt.",
+        initialAI: "Mô tả lúc đặt và tem bạn nêu đều ghi 6 lít. Cảm nhận “thấy bé” và lời dọa không đủ căn cứ để đề xuất hoàn tiền; mình cũng chưa kết luận khiếu nại sai. Bạn có thể nêu sai khác cụ thể hoặc gửi bằng chứng đo thực tế. Shop có cơ hội phản hồi.",
+        evidenceRequest: "Mình đã đề nghị bạn nêu sai khác cụ thể hoặc bổ sung bằng chứng đo thực tế. Shop có 24 giờ phản hồi; lời dọa không được dùng làm căn cứ, chưa có quyết định hoàn tiền hay từ chối.",
+        buyerEvidence: "Mình bổ sung bằng chứng về dung tích thực tế để đối chiếu.",
+        evidenceFollowup: "Đã ghi nhận bằng chứng mô phỏng. Nếu vẫn có bất đồng sau phản hồi của shop, hồ sơ cần được nhân viên xem xét.",
+        seller: "Shop phản hồi: mô tả lúc đặt và tem sản phẩm đều ghi 6 lít. Shop chưa có thêm bằng chứng về cách đo thực tế.",
+        transfer: "Mình đã chuyển hồ sơ cho Trưởng nhóm vì hai bên vẫn chưa thống nhất. Không có quyết định tự động hoàn tiền hoặc từ chối khiếu nại."
+      }
+    };
+
+    const state = {
+      caseId: "edited",
+      requested: false,
+      evidenceAdded: false,
+      sellerReplied: false,
+      transferred: true
+    };
+
+    const byId = (id) => document.getElementById(id);
+
+    function addMessage(kind, sender, text, meta) {
+      const article = document.createElement("article");
+      article.className = `message ${kind}`;
+      const title = document.createElement("span");
+      title.className = "sender";
+      title.textContent = sender;
+      const body = document.createElement("p");
+      body.textContent = text;
+      article.append(title, body);
+      if (meta) {
+        const detail = document.createElement("span");
+        detail.className = "message-meta";
+        detail.textContent = meta;
+        article.append(detail);
+      }
+      byId("chat").append(article);
+    }
+
+    function render() {
+      const selected = cases[state.caseId];
+      byId("case-caption").textContent = selected.caption;
+      byId("order-id").textContent = selected.orderId;
+      byId("product-icon").textContent = selected.icon;
+      byId("product-name").textContent = selected.product;
+      byId("product-summary").textContent = selected.date;
+      byId("order-date-label").textContent = selected.orderDate;
+      byId("current-date-label").textContent = selected.currentDate;
+      byId("confidence").textContent = selected.confidence;
+      byId("historical-description").textContent = selected.historical;
+      byId("historical-source").textContent = selected.historicalSource;
+      byId("current-description").textContent = selected.current;
+      byId("current-source").textContent = selected.currentSource;
+      byId("missing-evidence").textContent = selected.missing;
+
+      const chat = byId("chat");
+      chat.replaceChildren();
+      addMessage("buyer", "Bạn · Người mua", selected.buyer);
+      addMessage("assistant", "Trợ lý AI", selected.initialAI, "Độ chắc chắn: chưa đủ căn cứ");
+      if (state.requested) {
+        addMessage("assistant", "Trợ lý AI", selected.evidenceRequest, "Đã gửi yêu cầu bổ sung bằng chứng");
+      }
+      if (state.evidenceAdded) {
+        addMessage("buyer", "Bạn · Người mua", selected.buyerEvidence);
+        addMessage("assistant", "Trợ lý AI", selected.evidenceFollowup);
+      }
+      if (state.sellerReplied) {
+        addMessage("seller", "Shop · Phản hồi", selected.seller, "Phản hồi giả lập để demo");
+      }
+      if (state.transferred) {
+        addMessage("assistant", "Trợ lý AI", selected.transfer, "Hồ sơ đã chuyển · Không tự quyết kết quả");
+      }
+
+      const status = byId("case-status");
+      status.textContent = state.transferred ? "Đã chuyển Trưởng nhóm" : state.sellerReplied ? "Chờ đối chiếu hai bên" : state.requested ? "Đang chờ bằng chứng" : "Đang kiểm tra";
+      status.classList.toggle("resolved", state.transferred);
+
+      byId("request-evidence").disabled = state.requested;
+      byId("add-evidence").disabled = !state.requested || state.evidenceAdded;
+      byId("seller-reply").disabled = state.sellerReplied;
+      byId("transfer-case").disabled = state.transferred;
+
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function resetCase(caseId) {
+      state.caseId = caseId;
+      state.requested = false;
+      state.evidenceAdded = false;
+      state.sellerReplied = false;
+      state.transferred = caseId === "edited";
+      document.querySelectorAll("[data-case]").forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.case === caseId));
+      });
+      render();
+    }
+
+    document.querySelectorAll("[data-case]").forEach((button) => {
+      button.addEventListener("click", () => resetCase(button.dataset.case));
+    });
+
+    byId("request-evidence").addEventListener("click", () => {
+      state.requested = true;
+      render();
+    });
+
+    byId("add-evidence").addEventListener("click", () => {
+      state.evidenceAdded = true;
+      render();
+    });
+
+    byId("seller-reply").addEventListener("click", () => {
+      state.sellerReplied = true;
+      render();
+    });
+
+    byId("transfer-case").addEventListener("click", () => {
+      state.transferred = true;
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

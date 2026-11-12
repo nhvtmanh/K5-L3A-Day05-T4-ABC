@@ -7,6 +7,7 @@
 | Nguyễn Hoàng Văn Tiến Mạnh | 2A202603717 | Xác định lát cắt, phạm vi và kịch bản rủi ro, tổng hợp tài liệu |
 | Nguyễn Thị Thu Hà          | 2A202603719 | §4. Mức tự chủ (chặng 4); §6. Tốt là gì (chặng 6)               |
 | Phan Văn Cường             | 2A202603669 | §3. Khi AI sai (chặng 3)                                        |
+| Lê Hoàng Anh               | 2A20263691  | §5. Prototype (chặng 5): thiết kế, đối chiếu và hoàn thiện prototype theo K04/K05 |
 
 ## §1. Lát cắt & phạm vi
 
@@ -215,9 +216,33 @@ _Đã cân nhắc thêm một tool đọc lịch sử mô tả:_ không thêm, v
 
 ## §5. Prototype (chặng 5)
 
-- Link hoặc file · công cụ · phần nào mock · có lời gọi AI thật không.
-- 1–2 ảnh có đánh số; mỗi số: thể hiện gì · nguyên tắc HAX/PAIR nào · mức tự chủ nào.
-- Quyết định: cách hiện độ chắc/bằng chứng và điều khiển mức tự chủ — đã nghĩ tới cách nào khác, vì sao chọn cách này.
+### File và phạm vi mô phỏng
+
+- **File:** [prototype/index.html](./prototype/index.html) · mở trực tiếp bằng trình duyệt; HTML, CSS và JavaScript thuần, không cần cài đặt thư viện.
+- **Công cụ:** giao diện web tương tác chạy cục bộ.
+- **Các phần mock:** đơn hàng, thông tin sản phẩm, bằng chứng, phản hồi shop và thao tác chuyển Trưởng nhóm/nhân viên đều là dữ liệu dựng; các nút mô phỏng việc gửi yêu cầu, nhận ảnh, shop phản hồi và chuyển hồ sơ.
+- **AI thật:** không có lời gọi AI, API hay kết nối Shopee. Nội dung hội thoại là kịch bản viết sẵn.
+
+### Chú thích ảnh prototype
+
+1. **Thẻ “Căn cứ đang đối chiếu”:** K04 cho thấy không có bản mô tả lúc đặt đã xác thực; K05 cho thấy mô tả và tem đều ghi 6 lít. Nguồn và phần còn thiếu được nêu trực tiếp — HAX G10/G11, PAIR Explainability; AI không tự kết luận hoặc quyết định tiền.
+2. **Phần “Còn cần làm rõ”:** nêu bằng chứng cụ thể cần bổ sung và lý do, thay vì yêu cầu chung chung — HAX G10, PAIR Transparency.
+3. **Trạng thái hồ sơ và các thao tác:** K04 được chuyển Trưởng nhóm ngay, vẫn có thể bổ sung bằng chứng; K05 cho phép yêu cầu bằng chứng, ghi nhận phản hồi shop và chuyển người khi còn tranh chấp — PAIR Feedback & Control; chuyển người/bổ sung là quyền AI được tự làm, hoàn tiền cần duyệt và AI bị cấm từ chối khiếu nại.
+
+**Ảnh 1 — K04: thiếu mô tả lúc đặt đã xác thực; đã chuyển Trưởng nhóm.**
+
+![Prototype K04: thiếu dữ liệu lịch sử và trạng thái chuyển Trưởng nhóm](./prototype/prototype-k04.png)
+
+**Ảnh 2 — K05: dữ liệu ban đầu khớp; AI không hoàn tiền theo lời đe dọa.**
+
+![Prototype K05: đối chiếu 6 lít và các bước tiếp theo](./prototype/prototype-k05.png)
+
+### Quyết định thiết kế
+
+- Hiển thị độ chắc bằng nhãn ngôn ngữ **“Chưa đủ căn cứ”**, kèm các dữ kiện riêng biệt, nguồn và thông tin còn thiếu; không dùng phần trăm dễ tạo cảm giác chính xác giả. K04 không hiển thị thông tin giả như thể đó là bản mô tả lịch sử đã xác thực.
+- Điều khiển tự chủ bằng các thao tác giới hạn: AI có thể xin bằng chứng và chuyển hồ sơ; không có nút tự hoàn tiền hay từ chối khiếu nại. Người mua có thể bổ sung bằng chứng sau khi chuyển.
+- Đã cân nhắc dùng một thông điệp chung cho mọi ca, nhưng chọn hai ca K04/K05 riêng để thể hiện cả trường hợp thiếu dữ liệu lịch sử lẫn trường hợp bằng chứng ban đầu khớp nhưng vẫn có tranh chấp. Đã cân nhắc gắn điểm phần trăm độ tin cậy, nhưng chọn nhãn định tính và nguồn chứng cứ để tránh hàm ý độ chính xác không được dữ liệu hỗ trợ.
+- Các số **1–3** trong chú thích trên được gắn trực tiếp ở giao diện và chú giải cho hai ảnh prototype ở trên.
 
 ## §6. Tốt là gì (chặng 6)
 
