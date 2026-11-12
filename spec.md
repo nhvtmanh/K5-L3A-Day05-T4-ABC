@@ -6,7 +6,7 @@
 | -------------------------- | ----------- | ----------- |
 | Nguyễn Hoàng Văn Tiến Mạnh | 2A202603717 |             |
 | Nguyễn Thị Thu Hà          | 2A202603719 |             |
-| Phan Văn Cường             | 2A202603669 |             |
+| Phan Văn Cường             | 2A202603669 |§3. Khi AI sai (chặng 3)|
 
 ## §1. Lát cắt & phạm vi
 
@@ -54,13 +54,28 @@ Nhóm chọn **K04 và K05 là hai kịch bản đắt nhất để thiết kế
 
 ## §3. Khi AI sai (chặng 3)
 
-Với mỗi kịch bản đắt nhất:
+### 1. K04 — Người bán sửa mô tả sau khi bán (Cotton 100% → Vải pha)
 
-- AI nói gì (nguyên văn) · người dùng thấy gì · làm gì tiếp · ai được báo, sau bao lâu.
-- Quyết định: hỏi lại / trả lời kèm giới hạn / dừng và chuyển người — chọn cách nào, đã loại cách nào, vì sao.
-- Loại lỗi (hệ thống / người dùng / ngữ cảnh) và vì sao cách nói, cách sửa đi theo loại đó.
-- 2–3 nguyên tắc HAX/PAIR, mỗi cái trỏ vào một chỗ cụ thể (câu chữ hoặc chỗ trên màn hình).
-- Lỗi nào sửa câu chữ không cứu được (nếu có), và thiết kế cứu nó thế nào.
+- **AI nói (nguyên văn):** *"Hiện hệ thống chỉ ghi nhận trang sản phẩm đang hiển thị 'vải pha' và chưa thể tự truy xuất lịch sử chỉnh sửa mô tả tại thời điểm bạn đặt đơn[cite: 16]. AI chưa đủ căn cứ để quyết định hoàn tiền hay từ chối[cite: 16]. Bạn vui lòng bổ sung ảnh chi tiết đơn hàng lúc đặt hoặc tin nhắn xác nhận của shop; đồng thời hệ thống đã chuyển hồ sơ sang Trưởng nhóm để kiểm tra log lịch sử và yêu cầu Người bán đối chiếu[cite: 16]."*
+- **Người dùng thấy:** Nhãn đầu khung chat *"Trợ lý AI hỗ trợ đối chiếu — Không tự quyết định tiền hay phạt shop"*[cite: 16]; thẻ đối chiếu hiển thị độ chắc `Thấp — Thiếu dữ liệu lúc đặt` kèm 2 dữ liệu hiện có (`Trang hiện tại: Vải pha` vs `Ảnh khách gửi: Chưa xác minh thời điểm`)[cite: 16]; nút **`Tải thêm bằng chứng`**, **`Sửa thông tin`** và huy hiệu **`Đã chuyển Trưởng nhóm`**[cite: 16].
+- **Làm gì tiếp & Ai được báo:** Người mua tải thêm ảnh chi tiết đơn hàng lúc đặt[cite: 16]. **Trưởng nhóm** nhận hồ sơ kèm cờ *"Tranh chấp sửa mô tả"* ngay lập tức (`chuyen_truong_nhom`); **Người bán** nhận thông báo và có **24 giờ để phản hồi**[cite: 16]. Nếu khách không thao tác sau 24 giờ, hồ sơ vẫn giữ nguyên cho Trưởng nhóm kiểm tra (không tự đóng đơn)[cite: 16].
+- **Quyết định phản ứng:** Chọn **Trả lời kèm giới hạn + Xin bằng chứng + Chuyển người**[cite: 8, 16]. Loại *tự từ chối (`tu_choi_khieu_nai`)* vì trang hiện tại đã bị sửa, bác đơn sẽ làm người mua mất quyền lợi oan[cite: 16]; loại *tự hoàn tiền (`soan_hoan_tien`)* vì ảnh khách gửi chưa xác minh thời điểm, dễ gây thiệt hại cho shop[cite: 16]; loại *chỉ hỏi lại* vì bộ tool không có chức năng lấy lịch sử mô tả nên hỏi lại vẫn kẹt[cite: 16].
+- **Loại lỗi & Thiết kế cứu lỗi:** **Lỗi hệ thống** (khoảng trống dữ liệu của bộ tool không truy xuất được mô tả lúc đặt)[cite: 8, 16]. Vì vậy AI phải thừa nhận giới hạn kỹ thuật thay vì đổ lỗi cho khách[cite: 16]. **Lỗi sửa câu chữ không cứu được:** Dù xin lỗi khéo đến đâu, nếu AI vẫn được quyền gọi `tu_choi_khieu_nai` hoặc `soan_hoan_tien` dựa trên dữ liệu chưa xác minh thì khách hoặc shop vẫn có thể chịu thiệt[cite: 16] — phải khóa cứng cả hai quyền này và buộc chuyển Trưởng nhóm[cite: 16].
+
+### 2. K05 — Người bán đúng (Tem khớp 6L) nhưng khách khiếu nại cảm tính và dọa bóc phốt
+
+- **AI nói (nguyên văn):** *"Theo đối chiếu hiện tại, cả mô tả lúc đặt hàng và tem trên sản phẩm bạn gửi đều ghi dung tích **6 Lít** (trùng khớp)[cite: 16]. Cảm nhận kích thước bằng mắt thường chưa đủ căn cứ để đề xuất hoàn tiền ngay[cite: 16]. Nếu lòng nồi thực tế không đạt 6 Lít, bạn vui lòng gửi video đo dung tích thực tế (như đong nước chia vạch) để mình cập nhật hồ sơ gửi Người bán phản hồi, hoặc bấm chuyển Nhân viên Shopee xem xét trực tiếp[cite: 16]."*
+- **Người dùng thấy:** Khung đối chiếu trung lập (`Mô tả lúc đặt: 6L` = `Tem nhận hàng: 6L` → nhãn `Chưa đủ căn cứ hoàn tiền`)[cite: 16]; 3 nút ngang hàng: **`Bổ sung video đo thực tế`**, **`Chuyển Nhân viên phân xử`**, **`Hủy khiếu nại`**[cite: 16].
+- **Làm gì tiếp & Ai được báo:** Người mua chọn 1 trong 3 nút[cite: 16]. Khi bổ sung bằng chứng hoặc yêu cầu phân xử, **Người bán** được báo ngay (có **24 giờ để phản hồi**) và **Nhân viên/Trưởng nhóm** nhận hồ sơ đối chiếu[cite: 16]. Nếu khách không thao tác gì sau 48 giờ, khiếu nại tự động hủy để giải ngân cho Người bán.
+- **Quyết định phản ứng:** Chọn **Trả lời kèm giới hạn ("Chưa đủ căn cứ") + Mở quyền bổ sung / Chuyển người**[cite: 8, 16]. Loại *hoàn tiền ngay (`soan_hoan_tien`)* vì tem khớp 6L, hoàn tiền để dập lời dọa sẽ xử thua oan người bán đúng[cite: 16]; loại *từ chối ngay (`tu_choi_khieu_nai`)* vì nồi vẫn có thể đúc sai dung tích thật so với tem, đóng đơn ngay sẽ tước quyền chứng minh của khách[cite: 16].
+- **Loại lỗi & Cách sửa:** **Lỗi ngữ cảnh / cảm nhận** (sản phẩm đúng thông số nhưng lệch cảm nhận chủ quan của khách, kèm áp lực đe dọa)[cite: 7, 16]. AI giữ giọng trung lập, không nhắc lại lời dọa hay phán xét khách sai, đồng thời vô hiệu hóa nút đề xuất hoàn tiền khi các thông số đang khớp[cite: 16].
+
+### 3. Nguyên tắc HAX / PAIR áp dụng cụ thể
+
+- **HAX G1 & G2 (Minh bạch năng lực — Luật AI 134/2025/QH15):** Dòng thông báo cố định đầu khung chat (*"Trợ lý AI hỗ trợ đối chiếu — Không tự quyết định tiền hay phạt shop"*) và nhãn trạng thái `Thiếu dữ liệu lúc đặt` (K04) / `Chưa đủ căn cứ` (K05) trong thẻ đối chiếu[cite: 7, 16].
+- **HAX G10 (Thu hẹp phạm vi khi nghi ngờ):** Thay vì tự phán xử thắng thua, câu trả lời ở cả K04 và K05 thu hẹp hành động về việc nêu rõ phần bằng chứng còn thiếu (ảnh chi tiết đơn hàng / video đong nước) và mở đường chuyển người thật[cite: 7, 16].
+- **PAIR — Explainability + Trust:** Thẻ đối chiếu 2 cột đặt cạnh nhau các dữ liệu trích xuất (`Trang hiện tại` vs `Ảnh khách gửi`; `Mô tả lúc đặt 6L` vs `Tem 6L`) ngay trên nút hành động để người dùng tự kiểm chứng căn cứ thay vì nhận câu từ chối chung chung[cite: 7, 16].
+- **HAX G8 & G9 (Gạt bỏ & sửa dễ dàng):** Nút **`Sửa thông tin`** (xử lý khi chọn nhầm đơn như K11) và **`Hủy khiếu nại`** đặt ngang hàng với nút gửi bằng chứng[cite: 7, 16].
 
 ## §4. Mức tự chủ (chặng 4)
 
